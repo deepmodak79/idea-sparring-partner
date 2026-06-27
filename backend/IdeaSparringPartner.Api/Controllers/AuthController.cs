@@ -2,8 +2,10 @@ using IdeaSparringPartner.Api.Data;
 using IdeaSparringPartner.Api.DTOs.Auth;
 using IdeaSparringPartner.Api.Models;
 using IdeaSparringPartner.Api.Services.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace IdeaSparringPartner.Api.Controllers;
 
@@ -68,6 +70,66 @@ public class AuthController : ControllerBase
             return Unauthorized(new { error = "Invalid email or password." });
 
         return Ok(await BuildAuthResponseAsync(user, cancellationToken));
+    }
+
+    [HttpPost("refresh")]
+    public async Task<ActionResult<TokenRefreshResponse>> Refresh(
+        [FromBody] RefreshTokenRequest request,
+        CancellationToken cancellationToken)
+    {
+        var storedToken = await _refreshTokenService.ValidateRefreshTokenAsync(
+            request.RefreshToken, cancellationToken);
+
+        if (storedToken?.User is null)
+            return Unauthorized(new { error = "Invalid or expired refresh token." });
+
+        await _refreshTokenService.RevokeRefreshTokenAsync(request.RefreshToken, cancellationToken);
+
+        var accessToken = _jwtTokenService.GenerateAccessToken(storedToken.User, out var expiresIn);
+        var (newRefreshToken, _) = await _refreshTokenService.CreateRefreshTokenAsync(
+            storedToken.User, cancellationToken);
+
+        return Ok(new TokenRefreshResponse
+        {
+            AccessToken = accessToken,
+            RefreshToken = newRefreshToken,
+            ExpiresIn = expiresIn
+        });
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(
+        [FromBody] RefreshTokenRequest request,
+        CancellationToken cancellationToken)
+    {
+        await _refreshTokenService.RevokeRefreshTokenAsync(request.RefreshToken, cancellationToken);
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<ActionResult<UserDto>> Me(CancellationToken cancellationToken)
+    {
+        var userId = GetCurrentUserId();
+        if (userId is null)
+            return Unauthorized();
+
+        var user = await _dbContext.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+
+        if (user is null)
+            return Unauthorized();
+
+        return Ok(MapUser(user));
+    }
+
+    private Guid? GetCurrentUserId()
+    {
+        var value = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub);
+        return Guid.TryParse(value, out var id) ? id : null;
     }
 
     private async Task<AuthResponse> BuildAuthResponseAsync(User user, CancellationToken cancellationToken)

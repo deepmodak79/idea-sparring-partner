@@ -55,4 +55,9 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddJwtAuthenticationIfConfigured(
+        this IServiceCollection services,
+        IConfiguration configuration) =>
+        services.AddJwtAuthentication(configuration);
 }
