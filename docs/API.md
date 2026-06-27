@@ -1,6 +1,6 @@
 # API Reference (Planned)
 
-> **Status:** Most endpoints are **planned**, not implemented. `GET /api/health` is implemented. Request/response shapes are drafts and may change during implementation.
+> **Status:** Most endpoints are **planned**, not implemented. `GET /api/health` and `GET /api/health/database` are implemented. Request/response shapes are drafts and may change during implementation.
 
 **Base URL (local):** `http://localhost:5080/api`
 
@@ -43,22 +43,39 @@
 | | |
 |---|---|
 | **Auth required** | No |
-| **Status** | Planned |
+| **Status** | Implemented |
 
-**Response 200:**
+**Response 200 (database reachable):**
 
 ```json
 {
-  "status": "healthy",
-  "database": "connected"
+  "status": "ok",
+  "database": "reachable",
+  "timestamp": "2026-06-28T12:00:00Z"
 }
 ```
 
-**Possible errors:**
+**Response 503 (connection string not configured):**
 
-| Status | Condition |
-|--------|-----------|
-| 503 | Database connection failed |
+```json
+{
+  "status": "unavailable",
+  "database": "not_configured",
+  "timestamp": "2026-06-28T12:00:00Z"
+}
+```
+
+**Response 503 (database unreachable):**
+
+```json
+{
+  "status": "unavailable",
+  "database": "unreachable",
+  "timestamp": "2026-06-28T12:00:00Z"
+}
+```
+
+Connection strings and detailed database errors are never returned in the response.
 
 ---
 

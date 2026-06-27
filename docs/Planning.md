@@ -33,8 +33,9 @@ Do not batch unrelated features into one commit.
 | 0.1 Clean repository structure | Complete |
 | 0.2 Product and architecture planning docs | Complete |
 | 1.1 ASP.NET Core API shell | Complete |
+| 1.2 Supabase PostgreSQL connection | Complete |
 
-Backend API shell with health endpoint is implemented. Database, auth, and feature APIs are pending.
+Backend API shell and EF Core database connectivity are implemented. Domain schema, auth, and feature APIs are pending.
 
 ## Full Task Roadmap
 
@@ -50,7 +51,7 @@ Backend API shell with health endpoint is implemented. Database, auth, and featu
 | Task | Description | Status |
 |------|-------------|--------|
 | 1.1 | ASP.NET Core API shell | Done |
-| 1.2 | Supabase PostgreSQL connection | Pending |
+| 1.2 | Supabase PostgreSQL connection | Done |
 
 ### Phase 2 — Domain and Database
 

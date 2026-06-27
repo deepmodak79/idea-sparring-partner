@@ -4,7 +4,7 @@ A full-stack AI application where users submit ideas and receive adversarial fee
 
 ## Current Implementation Status
 
-This repository has **planning documentation** and an **ASP.NET Core API shell** with a health endpoint. Frontend, database, auth, and feature APIs are not implemented yet.
+This repository has **planning documentation**, an **ASP.NET Core API shell**, and **Supabase PostgreSQL connectivity** via EF Core. Domain schema, auth, feature APIs, and frontend are not implemented yet.
 
 The following are **not implemented yet**:
 
@@ -71,7 +71,25 @@ dotnet run
 
 Health check: http://localhost:5080/api/health
 
+Database health check: http://localhost:5080/api/health/database
+
 Swagger UI (development): http://localhost:5080/swagger
+
+### Database (Supabase PostgreSQL)
+
+The backend uses **Supabase PostgreSQL** as the hosted database with **Entity Framework Core** and the Npgsql provider. No domain tables or migrations exist yet — this task only establishes connectivity.
+
+Configure the connection string locally with **.NET user secrets** (recommended) or environment variables. Do not commit real credentials to `appsettings.json`.
+
+```bash
+cd backend/IdeaSparringPartner.Api
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<your-supabase-connection-string>"
+```
+
+In Supabase: **Project Settings → Database → Connection string**. Choose **Session pooler** (not Direct connection) and copy the **.NET** or **URI** format. For EF Core, Session pooler on port **5432** is recommended — the Direct connection string often fails on IPv4-only networks.
+
+On Render or other hosts, set `ConnectionStrings__DefaultConnection` as an environment variable.
 
 **Troubleshooting:** If `dotnet run` fails with `address already in use` on port 5080, a previous API instance is still running. Press `Ctrl+C` in that terminal, or on Windows run:
 
@@ -85,8 +103,8 @@ Frontend setup will be added when the Angular app is scaffolded.
 
 ## Known Limitations
 
-- Only the API shell and health endpoint are implemented.
-- Database, auth, and feature endpoints are planned, not built.
+- API shell and health endpoints are implemented; EF Core is wired but no domain schema exists yet.
+- Auth and feature endpoints are planned, not built.
 - Frontend UI does not exist yet.
 
 ## Submission Notes

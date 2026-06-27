@@ -1,6 +1,6 @@
 # Architecture
 
-> **Status:** Planning document. Nothing described here is implemented yet.
+> **Status:** Planning document. API shell and database connectivity are implemented; feature logic is not.
 
 ## System Overview
 
@@ -69,6 +69,22 @@ Stores:
 - **syntheses** — Versioned cross-thread summaries
 
 See [Schema.md](./Schema.md) for table details.
+
+## Data Access (Implemented)
+
+| Concern | Approach |
+|---------|----------|
+| ORM | Entity Framework Core |
+| Database | Supabase PostgreSQL (hosted Postgres) |
+| Provider | Npgsql.EntityFrameworkCore.PostgreSQL |
+| DbContext | `AppDbContext` — empty for now, no `DbSet` entities yet |
+| Connection string | `ConnectionStrings:DefaultConnection` |
+| Local config | .NET user secrets (recommended) |
+| Production config | Environment variable `ConnectionStrings__DefaultConnection` on Render |
+
+The backend registers `AppDbContext` only when the connection string is configured. If it is missing or empty, the app still starts and `GET /api/health/database` returns `503` with `database: "not_configured"`.
+
+No database schema or EF Core migrations have been created yet. Domain entities will be added in a later task.
 
 ## Authentication Strategy (Draft)
 

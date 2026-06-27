@@ -1,3 +1,6 @@
+using IdeaSparringPartner.Api.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace IdeaSparringPartner.Api.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -11,6 +14,14 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        if (!string.IsNullOrWhiteSpace(connectionString))
+        {
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseNpgsql(connectionString));
+        }
+
         return services;
     }
 
