@@ -1,20 +1,17 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HealthComponent } from './features/health/health.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HealthComponent],
+  imports: [RouterOutlet],
   template: `
     <div class="app-shell">
       <header>
         <h1>Idea Sparring Partner</h1>
-        <p>Adversarial AI feedback for your ideas</p>
       </header>
       <main>
         <router-outlet />
-        <app-health />
       </main>
     </div>
   `,
