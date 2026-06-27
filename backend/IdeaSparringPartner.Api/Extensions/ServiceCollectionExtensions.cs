@@ -1,4 +1,6 @@
+using IdeaSparringPartner.Api.Configuration;
 using IdeaSparringPartner.Api.Data;
+using IdeaSparringPartner.Api.Services.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdeaSparringPartner.Api.Extensions;
@@ -7,6 +9,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
         return services;
     }
 
@@ -32,6 +35,9 @@ public static class ServiceCollectionExtensions
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+
+        services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+        services.Configure<AiSettings>(configuration.GetSection(AiSettings.SectionName));
 
         var frontendUrl = configuration["FrontendUrl"] ?? "http://localhost:4300";
 
