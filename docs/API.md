@@ -1,6 +1,6 @@
 # API Reference (Planned)
 
-> **Status:** All endpoints below are **planned**, not implemented. Request/response shapes are drafts and may change during implementation.
+> **Status:** Most endpoints are **planned**, not implemented. `GET /api/health` is implemented. Request/response shapes are drafts and may change during implementation.
 
 **Base URL (local):** `http://localhost:5080/api`
 
@@ -24,22 +24,17 @@
 | | |
 |---|---|
 | **Auth required** | No |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Response 200:**
 
 ```json
 {
-  "status": "healthy",
+  "status": "ok",
+  "service": "Idea Sparring Partner API",
   "timestamp": "2026-06-28T12:00:00Z"
 }
 ```
-
-**Possible errors:**
-
-| Status | Condition |
-|--------|-----------|
-| 503 | Service unavailable |
 
 ---
 

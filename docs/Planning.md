@@ -32,8 +32,9 @@ Do not batch unrelated features into one commit.
 |------|--------|
 | 0.1 Clean repository structure | Complete |
 | 0.2 Product and architecture planning docs | Complete |
+| 1.1 ASP.NET Core API shell | Complete |
 
-Nothing beyond repository setup and planning documentation is implemented.
+Backend API shell with health endpoint is implemented. Database, auth, and feature APIs are pending.
 
 ## Full Task Roadmap
 
@@ -48,7 +49,7 @@ Nothing beyond repository setup and planning documentation is implemented.
 
 | Task | Description | Status |
 |------|-------------|--------|
-| 1.1 | ASP.NET Core API shell | Pending |
+| 1.1 | ASP.NET Core API shell | Done |
 | 1.2 | Supabase PostgreSQL connection | Pending |
 
 ### Phase 2 — Domain and Database

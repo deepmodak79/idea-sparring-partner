@@ -4,13 +4,13 @@ A full-stack AI application where users submit ideas and receive adversarial fee
 
 ## Current Implementation Status
 
-This repository is at the **repository and planning setup stage**. Documentation and folder structure are in place; application code has not been started.
+This repository has **planning documentation** and an **ASP.NET Core API shell** with a health endpoint. Frontend, database, auth, and feature APIs are not implemented yet.
 
 The following are **not implemented yet**:
 
 - Authentication
 - Database schema and migrations
-- Backend API endpoints
+- Feature APIs (ideas, threads, messages, memories, synthesis)
 - AI integration
 - Frontend UI
 
@@ -36,7 +36,7 @@ The following are **not implemented yet**:
 README.md
 .gitignore
 .env.example
-backend/          # ASP.NET Core Web API (placeholder)
+backend/IdeaSparringPartner.Api/  # ASP.NET Core Web API
 frontend/         # Angular app (placeholder)
 ai-logs/          # AI usage logs for submission
 docs/
@@ -60,13 +60,34 @@ Copy `.env.example` to `.env` and fill in values when backend and database are i
 
 ## Setup
 
-Detailed setup steps (prerequisites, local database, backend run, frontend run) will be expanded as the backend and frontend projects are scaffolded.
+### Backend (local)
+
+```bash
+cd backend/IdeaSparringPartner.Api
+dotnet restore
+dotnet build
+dotnet run
+```
+
+Health check: http://localhost:5080/api/health
+
+Swagger UI (development): http://localhost:5080/swagger
+
+**Troubleshooting:** If `dotnet run` fails with `address already in use` on port 5080, a previous API instance is still running. Press `Ctrl+C` in that terminal, or on Windows run:
+
+```powershell
+Get-NetTCPConnection -LocalPort 5080 | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force }
+```
+
+Then run `dotnet run` again.
+
+Frontend setup will be added when the Angular app is scaffolded.
 
 ## Known Limitations
 
-- This is currently **documentation and repository setup only**.
-- No runnable application exists yet.
-- API contracts and schema are planned, not implemented.
+- Only the API shell and health endpoint are implemented.
+- Database, auth, and feature endpoints are planned, not built.
+- Frontend UI does not exist yet.
 
 ## Submission Notes
 
