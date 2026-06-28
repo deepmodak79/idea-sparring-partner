@@ -13,12 +13,13 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
 ENV ASPNETCORE_ENVIRONMENT=Production
-# Render sets PORT (often 10000). Override in Render env if needed:
-# ASPNETCORE_URLS=http://0.0.0.0:10000
-ENV ASPNETCORE_URLS=http://+:8080
+# Avoid inotify file watchers in containers (Render/Linux limit crash)
+ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 
-EXPOSE 8080
+EXPOSE 10000
 
 COPY --from=build /app/publish .
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
 
-ENTRYPOINT ["dotnet", "IdeaSparringPartner.Api.dll"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
