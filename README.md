@@ -168,3 +168,9 @@ Create folder `docs/screenshots/` and add images such as:
 | `01-login.png` | Login page |
 | `02-dashboard.png` | Dashboard with idea list |
 | `03-workspace.png` | Four-panel workspace with thread messages |
+
+<img width="1017" height="879" alt="image" src="https://github.com/user-attachments/assets/3c062784-f08f-4282-b17e-165bd2fe9309" />
+<img width="1148" height="967" alt="image" src="https://github.com/user-attachments/assets/9fb4a203-bb4f-45c6-b806-b69b61268bb9" />
+<img width="694" height="842" alt="image" src="https://github.com/user-attachments/assets/32ab7607-df74-4c02-ac3a-6aa8eabdfadf" />
+
+
