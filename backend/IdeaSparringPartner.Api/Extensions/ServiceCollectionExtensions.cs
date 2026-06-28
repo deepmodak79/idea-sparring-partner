@@ -54,14 +54,41 @@ public static class ServiceCollectionExtensions
         services.Configure<AiSettings>(configuration.GetSection(AiSettings.SectionName));
 
         var frontendUrl = configuration["FrontendUrl"] ?? "http://localhost:4300";
+        var extraOrigins = configuration["FrontendUrls"]?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            ?? [];
+
+        var allowedOrigins = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            frontendUrl.TrimEnd('/')
+        };
+        foreach (var origin in extraOrigins)
+            allowedOrigins.Add(origin.TrimEnd('/'));
 
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
-                policy.WithOrigins(frontendUrl)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
+                policy.SetIsOriginAllowed(origin =>
+                {
+                    if (string.IsNullOrWhiteSpace(origin))
+                        return false;
+
+                    var normalized = origin.TrimEnd('/');
+                    if (allowedOrigins.Contains(normalized))
+                        return true;
+
+                    if (!Uri.TryCreate(normalized, UriKind.Absolute, out var uri))
+                        return false;
+
+                    if (uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase))
+                        return true;
+
+                    // Netlify production + deploy preview URLs (*.netlify.app)
+                    return uri.Host.EndsWith(".netlify.app", StringComparison.OrdinalIgnoreCase);
+                })
+                .AllowAnyHeader()
+                .AllowAnyMethod();
             });
         });
 
