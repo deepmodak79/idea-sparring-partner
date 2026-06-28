@@ -9,10 +9,12 @@ namespace IdeaSparringPartner.Api.Services.Ideas;
 public class IdeaService
 {
     private readonly AppDbContext _dbContext;
+    private readonly OpeningChallengeService _openingChallengeService;
 
-    public IdeaService(AppDbContext dbContext)
+    public IdeaService(AppDbContext dbContext, OpeningChallengeService openingChallengeService)
     {
         _dbContext = dbContext;
+        _openingChallengeService = openingChallengeService;
     }
 
     public async Task<List<IdeaDto>> GetIdeasAsync(Guid userId, CancellationToken cancellationToken)
@@ -67,6 +69,14 @@ public class IdeaService
 
         _dbContext.Ideas.Add(idea);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        await _openingChallengeService.GenerateOpeningChallengesAsync(idea, cancellationToken);
+
+        idea = await _dbContext.Ideas
+            .AsNoTracking()
+            .Include(i => i.Threads)
+            .ThenInclude(t => t.Messages)
+            .FirstAsync(i => i.Id == idea.Id, cancellationToken);
 
         return MapIdea(idea);
     }

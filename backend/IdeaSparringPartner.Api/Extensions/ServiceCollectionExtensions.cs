@@ -1,5 +1,6 @@
 using IdeaSparringPartner.Api.Configuration;
 using IdeaSparringPartner.Api.Data;
+using IdeaSparringPartner.Api.Services.Ai;
 using IdeaSparringPartner.Api.Services.Auth;
 using IdeaSparringPartner.Api.Services.Ideas;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IdeaService, IdeaService>();
+        services.AddScoped<OpeningChallengeService, OpeningChallengeService>();
+        services.AddHttpClient<IAiService, GeminiAiService>();
         return services;
     }
 
