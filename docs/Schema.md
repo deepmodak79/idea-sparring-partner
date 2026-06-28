@@ -1,6 +1,6 @@
 # Database Schema (Planned)
 
-> **Status:** Planned schema only. No migrations or EF entities exist yet.
+> **Status:** Schema implemented via EF Core initial migration against Supabase PostgreSQL.
 
 ## Entity Relationship Diagram
 

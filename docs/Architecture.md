@@ -1,6 +1,6 @@
 # Architecture
 
-> **Status:** Planning document. API shell and database connectivity are implemented; feature logic is not.
+> **Status:** Implemented. API, database, AI orchestration, and frontend are built per this design.
 
 ## System Overview
 

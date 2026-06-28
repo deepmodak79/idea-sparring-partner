@@ -1,6 +1,6 @@
 # API Reference (Planned)
 
-> **Status:** Most endpoints are **planned**, not implemented. `GET /api/health` and `GET /api/health/database` are implemented. Request/response shapes are drafts and may change during implementation.
+> **Status:** All documented endpoints are **implemented**. Auth uses Bearer tokens. AI features require `Ai:GeminiApiKey` in user secrets or environment variables.
 
 **Base URL (local):** `http://localhost:5080/api`
 
@@ -86,7 +86,7 @@ Connection strings and detailed database errors are never returned in the respon
 | | |
 |---|---|
 | **Auth required** | No |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Request body:**
 
@@ -127,7 +127,7 @@ Connection strings and detailed database errors are never returned in the respon
 | | |
 |---|---|
 | **Auth required** | No |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Request body:**
 
@@ -167,7 +167,7 @@ Connection strings and detailed database errors are never returned in the respon
 | | |
 |---|---|
 | **Auth required** | No (uses refresh token in body) |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Request body:**
 
@@ -201,7 +201,7 @@ Connection strings and detailed database errors are never returned in the respon
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Request body:**
 
@@ -226,7 +226,7 @@ Connection strings and detailed database errors are never returned in the respon
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Response 200:**
 
@@ -254,7 +254,7 @@ Connection strings and detailed database errors are never returned in the respon
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Response 200:**
 
@@ -285,7 +285,7 @@ Connection strings and detailed database errors are never returned in the respon
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Request body:**
 
@@ -330,7 +330,7 @@ Creating an idea also creates four threads and triggers opening AI challenges (a
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Response 200:**
 
@@ -366,7 +366,7 @@ Creating an idea also creates four threads and triggers opening AI challenges (a
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Response 200:**
 
@@ -398,7 +398,7 @@ Creating an idea also creates four threads and triggers opening AI challenges (a
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Response 200:**
 
@@ -437,7 +437,7 @@ Creating an idea also creates four threads and triggers opening AI challenges (a
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Request body:**
 
@@ -496,7 +496,7 @@ Creating an idea also creates four threads and triggers opening AI challenges (a
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Query parameters:**
 
@@ -547,7 +547,7 @@ Creating an idea also creates four threads and triggers opening AI challenges (a
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 Soft-deletes the memory (`is_deleted = true`). Deleted memories are excluded from AI context.
 
@@ -569,7 +569,7 @@ Soft-deletes the memory (`is_deleted = true`). Deleted memories are excluded fro
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Request body:** Empty `{}` or omitted.
 
@@ -609,7 +609,7 @@ Soft-deletes the memory (`is_deleted = true`). Deleted memories are excluded fro
 | | |
 |---|---|
 | **Auth required** | Yes |
-| **Status** | Planned |
+| **Status** | Implemented |
 
 **Response 200:**
 

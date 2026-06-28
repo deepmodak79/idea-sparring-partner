@@ -4,63 +4,35 @@ A full-stack AI application where users submit ideas and receive adversarial fee
 
 ## Current Implementation Status
 
-This repository has **planning documentation**, an **ASP.NET Core API shell**, and **Supabase PostgreSQL connectivity** via EF Core. Domain schema, auth, feature APIs, and frontend are not implemented yet.
+The full application is implemented locally:
 
-The following are **not implemented yet**:
+- ASP.NET Core Web API with auth, ideas, threads, messages, memories, and synthesis
+- Angular frontend with login, dashboard, four-panel workspace, memory viewer, and synthesis
+- Supabase PostgreSQL via EF Core
+- Gemini AI integration (requires API key in user secrets)
 
-- Authentication
-- Database schema and migrations
-- Feature APIs (ideas, threads, messages, memories, synthesis)
-- AI integration
-- Frontend UI
+## Stack
 
-## Planned Stack
+| Layer | Technology |
+|-------|------------|
+| Frontend | Angular (port 4300) |
+| Backend | ASP.NET Core Web API (port 5080) |
+| Database | Supabase PostgreSQL |
+| ORM | Entity Framework Core |
+| AI | Gemini API |
+| Auth | JWT access token + refresh token |
 
-- **Frontend:** Angular
-- **Backend:** ASP.NET Core Web API
-- **Database:** Supabase PostgreSQL
-- **ORM:** Entity Framework Core
-- **AI Provider:** Gemini API
-- **Auth:** Custom JWT access token + refresh token
-
-## Planned Local URLs
+## Local URLs
 
 | Service | URL |
 |---------|-----|
 | Frontend | http://localhost:4300 |
 | Backend API | http://localhost:5080/api |
-
-## Repository Structure
-
-```
-README.md
-.gitignore
-.env.example
-backend/IdeaSparringPartner.Api/  # ASP.NET Core Web API
-frontend/         # Angular app (placeholder)
-ai-logs/          # AI usage logs for submission
-docs/
-  PRD.md          # Product requirements
-  Architecture.md # System design
-  API.md          # Planned API contracts
-  Schema.md       # Planned database schema
-  Planning.md     # Build roadmap and progress
-```
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and fill in values when backend and database are implemented. See `.env.example` for the full list of placeholders:
-
-- Database connection string
-- JWT configuration (secret, issuer, audience, token lifetimes)
-- Gemini API key and AI provider
-- Frontend and backend URLs
-
-**Do not commit `.env` or real secrets.**
+| Swagger | http://localhost:5080/swagger |
 
 ## Setup
 
-### Backend (local)
+### 1. Backend
 
 ```bash
 cd backend/IdeaSparringPartner.Api
@@ -69,48 +41,62 @@ dotnet build
 dotnet run
 ```
 
-Health check: http://localhost:5080/api/health
-
-Database health check: http://localhost:5080/api/health/database
-
-Swagger UI (development): http://localhost:5080/swagger
-
-### Database (Supabase PostgreSQL)
-
-The backend uses **Supabase PostgreSQL** as the hosted database with **Entity Framework Core** and the Npgsql provider. No domain tables or migrations exist yet — this task only establishes connectivity.
-
-Configure the connection string locally with **.NET user secrets** (recommended) or environment variables. Do not commit real credentials to `appsettings.json`.
+Configure secrets (do not commit these):
 
 ```bash
-cd backend/IdeaSparringPartner.Api
-dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<your-supabase-connection-string>"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<supabase-session-pooler-connection-string>"
+dotnet user-secrets set "Jwt:Secret" "<long-random-secret-at-least-32-chars>"
+dotnet user-secrets set "Ai:GeminiApiKey" "<your-gemini-api-key>"
 ```
 
-In Supabase: **Project Settings → Database → Connection string**. Choose **Session pooler** (not Direct connection) and copy the **.NET** or **URI** format. For EF Core, Session pooler on port **5432** is recommended — the Direct connection string often fails on IPv4-only networks.
+Use **Supabase Session pooler** (port 5432), not Direct connection, for local development.
 
-On Render or other hosts, set `ConnectionStrings__DefaultConnection` as an environment variable.
+Apply migrations if needed:
 
-**Troubleshooting:** If `dotnet run` fails with `address already in use` on port 5080, a previous API instance is still running. Press `Ctrl+C` in that terminal, or on Windows run:
+```bash
+dotnet ef database update
+```
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+Open http://localhost:4300
+
+### 3. Verify
+
+- http://localhost:5080/api/health
+- http://localhost:5080/api/health/database
+- Sign up → create idea → spar in four panels → view memories → generate synthesis
+
+### Troubleshooting
+
+**Port 5080 in use:** Stop the previous `dotnet run` with `Ctrl+C`, or on Windows:
 
 ```powershell
 Get-NetTCPConnection -LocalPort 5080 | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force }
 ```
 
-Then run `dotnet run` again.
+## Tests
 
-Frontend setup will be added when the Angular app is scaffolded.
+```bash
+cd backend/IdeaSparringPartner.Api.Tests
+dotnet test
 
-## Known Limitations
+cd frontend
+npm test
+```
 
-- API shell and health endpoints are implemented; EF Core is wired but no domain schema exists yet.
-- Auth and feature endpoints are planned, not built.
-- Frontend UI does not exist yet.
+## Deployment
+
+See `local/DEPLOYMENT-GUIDE.md` (gitignored) for Render + Netlify instructions.
 
 ## Submission Notes
 
-The following will be added before final submission:
-
-- Deployment URL
-- Screenshots of the working application
-- AI usage logs and summary in `ai-logs/`
+- Deployment URL: _to be added_
+- Screenshots: _to be added_
+- AI usage summary: `ai-logs/README.md`
