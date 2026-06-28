@@ -1,7 +1,13 @@
 [build]
   base = "frontend"
   command = "npm ci && npm run build"
-  publish = "frontend/dist/idea-sparring-partner/browser"
+  publish = "dist/idea-sparring-partner/browser"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Public API URL in environment.prod.ts is not a secret; avoid false positives
+  # if API_BASE_URL / BACKEND_URL are set in the Netlify UI.
+  SECRETS_SCAN_OMIT_KEYS = "API_BASE_URL,BACKEND_URL"
 
 [[redirects]]
   from = "/*"
