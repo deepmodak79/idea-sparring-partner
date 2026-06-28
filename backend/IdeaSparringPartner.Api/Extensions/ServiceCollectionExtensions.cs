@@ -4,6 +4,7 @@ using IdeaSparringPartner.Api.Services.Ai;
 using IdeaSparringPartner.Api.Services.Auth;
 using IdeaSparringPartner.Api.Services.Ideas;
 using IdeaSparringPartner.Api.Services.Memory;
+using IdeaSparringPartner.Api.Services.Syntheses;
 using IdeaSparringPartner.Api.Services.Threads;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ContextBuilder, ContextBuilder>();
         services.AddScoped<ThreadMessageService, ThreadMessageService>();
         services.AddScoped<MemoryExtractionService, MemoryExtractionService>();
+        services.AddScoped<SynthesisService, SynthesisService>();
         services.AddHttpClient<IAiService, GeminiAiService>();
         return services;
     }
