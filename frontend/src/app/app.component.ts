@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { KeepAliveService } from './core/services/keep-alive.service';
 
 @Component({
   selector: 'app-root',
@@ -21,4 +22,14 @@ import { RouterOutlet } from '@angular/router';
     header p { margin: 0; color: #555; }
   `]
 })
-export class AppComponent {}
+export class AppComponent implements OnInit, OnDestroy {
+  constructor(private readonly keepAlive: KeepAliveService) {}
+
+  ngOnInit(): void {
+    this.keepAlive.start();
+  }
+
+  ngOnDestroy(): void {
+    this.keepAlive.stop();
+  }
+}
