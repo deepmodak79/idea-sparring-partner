@@ -62,18 +62,21 @@ All roadmap tasks through submission documentation are **complete** locally.
 | 12.1 | Final Architecture.md | Done |
 | 12.2 | Final API.md and Schema.md | Done |
 | 12.3 | Planning.md and AI usage summary | Done |
-| 12.4 | Screenshots and final cleanup | Pending (manual) |
+| 12.4 | Screenshots and final cleanup | Pending — add PNG/JPG under `docs/screenshots/` (see root README) |
 
 ## AI Usage Summary
 
-AI coding tools were used during development for scaffolding, documentation, architecture alignment, and implementation assistance. Key decisions retained:
+AI tools (ChatGPT, Cursor) were used mainly for **deployment, Supabase connectivity, and debugging** schema, and tests were done manually.
+
+Key engineering decisions:
 
 - Thread isolation via dedicated context builder (exclude other thread messages)
 - Memory as separate entities with idea/user scope
 - Session pooler Supabase connection for local IPv4 compatibility
 - Client-side JWT storage for take-home practicality
+- Gemini free-tier API with graceful handling when quota is exceeded
 
-Detailed session logs: see `ai-logs/README.md`.
+Detailed summary: see `ai-logs/README.md`.
 
 ## Related Documents
 

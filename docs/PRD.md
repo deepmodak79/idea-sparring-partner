@@ -149,4 +149,4 @@ For this assignment, the product succeeds if:
 - Production-grade cookie-based auth
 - Streaming SSE responses
 - Advanced memory ranking or embeddings
-- Polished design system beyond clean, functional UI
+- Polished design system or theming — the UI is functional; effort focused on workflow, database design, and feature implementation due to time constraints

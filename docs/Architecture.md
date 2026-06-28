@@ -28,7 +28,7 @@ flowchart LR
 
 ## Frontend Responsibilities
 
-Planned (not built yet):
+Implemented:
 
 | Area | Responsibility |
 |------|----------------|
@@ -44,7 +44,7 @@ Frontend stores JWT access token and refresh token (localStorage or sessionStora
 
 ## Backend Responsibilities
 
-Planned (not built yet):
+Implemented:
 
 | Area | Responsibility |
 |------|----------------|
@@ -107,7 +107,7 @@ Flow:
 ## AI Integration Strategy
 
 - All AI calls go through an **`IAiService`** (or equivalent) abstraction
-- Initial provider: **Gemini API** via `GEMINI_API_KEY`
+- Initial provider: **Gemini API** via `GEMINI_API_KEY` (free tier in demo deployment; quota limits may surface as “limit exceeded” / rate-limit errors)
 - Configuration via `AI_PROVIDER=Gemini` allows future swap (e.g., OpenAI) without changing controllers
 - Two AI operations:
   1. **Thread reply** — Persona response in isolated context
