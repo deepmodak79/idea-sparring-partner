@@ -26,7 +26,7 @@ public class GeminiAiService : IAiService
         if (string.IsNullOrWhiteSpace(_settings.GeminiApiKey))
             throw new InvalidOperationException("Gemini API key is not configured.");
 
-        var model = string.IsNullOrWhiteSpace(_settings.Model) ? "gemini-1.5-flash" : _settings.Model;
+        var model = string.IsNullOrWhiteSpace(_settings.Model) ? "gemini-2.5-flash" : _settings.Model;
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={_settings.GeminiApiKey}";
 
         var payload = new

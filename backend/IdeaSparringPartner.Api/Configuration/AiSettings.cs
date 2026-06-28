@@ -6,5 +6,5 @@ public class AiSettings
 
     public string Provider { get; set; } = "Gemini";
     public string GeminiApiKey { get; set; } = string.Empty;
-    public string Model { get; set; } = "gemini-1.5-flash";
+    public string Model { get; set; } = "gemini-2.5-flash";
 }

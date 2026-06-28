@@ -1,5 +1,10 @@
+using IdeaSparringPartner.Api.Configuration;
 using IdeaSparringPartner.Api.Extensions;
 using IdeaSparringPartner.Api.Middleware;
+
+EnvFileLoader.Load(
+    Path.Combine(Directory.GetCurrentDirectory(), ".env"),
+    Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 

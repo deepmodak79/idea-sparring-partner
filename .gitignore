@@ -3,9 +3,14 @@ local/
 
 # Environment and secrets
 .env
-.env.local
+.env.*
+!.env.example
 appsettings.Development.json
 appsettings.Production.json
+appsettings.local.json
+**/secrets.json
+*.pfx
+*.pem
 
 # Node / Angular
 node_modules/
