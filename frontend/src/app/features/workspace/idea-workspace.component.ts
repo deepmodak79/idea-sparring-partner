@@ -58,8 +58,8 @@ import { getApiErrorMessage } from '../../core/utils/api-error.util';
         }
 
         <div class="panels">
-          @for (thread of threads(); track thread.id) {
-            <app-thread-panel [thread]="thread" />
+          @for (thread of threads(); track thread.id; let i = $index) {
+            <app-thread-panel [thread]="thread" [loadOrder]="i" />
           }
         </div>
       }

@@ -20,4 +20,8 @@ export class ThreadService {
   postMessage(threadId: string, content: string): Observable<PostMessageResponse> {
     return this.http.post<PostMessageResponse>(`${this.baseUrl}/threads/${threadId}/messages`, { content });
   }
+
+  ensureOpeningChallenge(threadId: string): Observable<{ message: Message }> {
+    return this.http.post<{ message: Message }>(`${this.baseUrl}/threads/${threadId}/opening-challenge`, {});
+  }
 }

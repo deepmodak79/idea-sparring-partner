@@ -1,5 +1,6 @@
 using IdeaSparringPartner.Api.DTOs.Messages;
 using IdeaSparringPartner.Api.Extensions;
+using IdeaSparringPartner.Api.Services.Ideas;
 using IdeaSparringPartner.Api.Services.Threads;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,14 @@ namespace IdeaSparringPartner.Api.Controllers;
 public class ThreadsController : ControllerBase
 {
     private readonly ThreadMessageService _threadMessageService;
+    private readonly OpeningChallengeService _openingChallengeService;
 
-    public ThreadsController(ThreadMessageService threadMessageService)
+    public ThreadsController(
+        ThreadMessageService threadMessageService,
+        OpeningChallengeService openingChallengeService)
     {
         _threadMessageService = threadMessageService;
+        _openingChallengeService = openingChallengeService;
     }
 
     [HttpGet("ideas/{ideaId:guid}/threads")]
@@ -48,6 +53,31 @@ public class ThreadsController : ControllerBase
             return NotFound(ApiErrorResponse.Create(ApiErrorResponse.Messages.ThreadNotFound));
 
         return Ok(new { items });
+    }
+
+    [HttpPost("threads/{threadId:guid}/opening-challenge")]
+    public async Task<ActionResult<object>> EnsureOpeningChallenge(
+        Guid threadId,
+        CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+        if (userId is null)
+            return Unauthorized(ApiErrorResponse.Create(ApiErrorResponse.Messages.Unauthorized));
+
+        try
+        {
+            var message = await _openingChallengeService.EnsureOpeningChallengeForUserAsync(
+                userId.Value, threadId, cancellationToken);
+
+            if (message is null)
+                return NotFound(ApiErrorResponse.Create(ApiErrorResponse.Messages.ThreadNotFound));
+
+            return Ok(new { message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return StatusCode(StatusCodes.Status502BadGateway, ApiErrorResponse.Create(ex.Message));
+        }
     }
 
     [HttpPost("threads/{threadId:guid}/messages")]
