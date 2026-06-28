@@ -3,6 +3,8 @@ using IdeaSparringPartner.Api.Data;
 using IdeaSparringPartner.Api.Services.Ai;
 using IdeaSparringPartner.Api.Services.Auth;
 using IdeaSparringPartner.Api.Services.Ideas;
+using IdeaSparringPartner.Api.Services.Memory;
+using IdeaSparringPartner.Api.Services.Threads;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdeaSparringPartner.Api.Extensions;
@@ -16,6 +18,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IdeaService, IdeaService>();
         services.AddScoped<OpeningChallengeService, OpeningChallengeService>();
+        services.AddScoped<ContextBuilder, ContextBuilder>();
+        services.AddScoped<ThreadMessageService, ThreadMessageService>();
+        services.AddScoped<MemoryExtractionService, MemoryExtractionService>();
         services.AddHttpClient<IAiService, GeminiAiService>();
         return services;
     }
