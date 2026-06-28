@@ -1,4 +1,5 @@
 using IdeaSparringPartner.Api.DTOs.Ideas;
+using IdeaSparringPartner.Api.Extensions;
 using IdeaSparringPartner.Api.Services.Ideas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,8 @@ public class IdeasController : ControllerBase
     public async Task<ActionResult<object>> GetIdeas(CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        if (userId is null) return Unauthorized();
+        if (userId is null)
+            return Unauthorized(ApiErrorResponse.Create(ApiErrorResponse.Messages.Unauthorized));
 
         var items = await _ideaService.GetIdeasAsync(userId.Value, cancellationToken);
         return Ok(new { items });
@@ -34,10 +36,11 @@ public class IdeasController : ControllerBase
         CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        if (userId is null) return Unauthorized();
+        if (userId is null)
+            return Unauthorized(ApiErrorResponse.Create(ApiErrorResponse.Messages.Unauthorized));
 
         if (string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Description))
-            return BadRequest(new { error = "Title and description are required." });
+            return BadRequest(ApiErrorResponse.Create("Title and description are required."));
 
         var idea = await _ideaService.CreateIdeaAsync(userId.Value, request, cancellationToken);
         return Created($"/api/ideas/{idea.Id}", idea);
@@ -47,10 +50,13 @@ public class IdeasController : ControllerBase
     public async Task<ActionResult<IdeaDto>> GetIdea(Guid ideaId, CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        if (userId is null) return Unauthorized();
+        if (userId is null)
+            return Unauthorized(ApiErrorResponse.Create(ApiErrorResponse.Messages.Unauthorized));
 
         var idea = await _ideaService.GetIdeaAsync(userId.Value, ideaId, cancellationToken);
-        return idea is null ? NotFound() : Ok(idea);
+        return idea is null
+            ? NotFound(ApiErrorResponse.Create(ApiErrorResponse.Messages.IdeaNotFound))
+            : Ok(idea);
     }
 
     private Guid? GetUserId()

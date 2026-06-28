@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
+import { getApiErrorMessage } from '../../core/utils/api-error.util';
 
 @Component({
   selector: 'app-health',
@@ -32,7 +33,10 @@ export class HealthComponent implements OnInit {
   ngOnInit(): void {
     this.api.getHealth().subscribe({
       next: (res) => this.apiStatus.set(res.status),
-      error: () => this.error.set('Backend API is not reachable.')
+      error: (err) => {
+        this.error.set(getApiErrorMessage(err, 'Backend API is not reachable.'));
+        this.loading.set(false);
+      }
     });
 
     this.api.getDatabaseHealth().subscribe({
@@ -41,7 +45,7 @@ export class HealthComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.dbStatus.set(err.status === 503 ? 'not_configured or unreachable' : 'error');
+        this.dbStatus.set(getApiErrorMessage(err, 'Database health check failed.'));
         this.loading.set(false);
       }
     });

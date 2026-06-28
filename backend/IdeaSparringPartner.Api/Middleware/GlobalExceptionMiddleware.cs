@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using IdeaSparringPartner.Api.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdeaSparringPartner.Api.Middleware;
 
@@ -22,21 +24,33 @@ public class GlobalExceptionMiddleware
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception occurred.");
-            await HandleExceptionAsync(context);
+            await HandleExceptionAsync(context, ex);
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context)
+    private static Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
+        var (statusCode, message) = MapException(ex);
+
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.StatusCode = statusCode;
 
         var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
 
         return context.Response.WriteAsJsonAsync(new
         {
-            message = "An unexpected error occurred.",
+            error = message,
+            message,
             traceId
         });
     }
+
+    private static (int StatusCode, string Message) MapException(Exception ex) => ex switch
+    {
+        InvalidOperationException operation => (StatusCodes.Status502BadGateway, operation.Message),
+        UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, ApiErrorResponse.Messages.Unauthorized),
+        DbUpdateException => (StatusCodes.Status503ServiceUnavailable, "Database operation failed. Please try again shortly."),
+        ArgumentException argument => (StatusCodes.Status400BadRequest, argument.Message),
+        _ => (StatusCodes.Status500InternalServerError, ApiErrorResponse.Messages.Unexpected)
+    };
 }

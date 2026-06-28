@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { getApiErrorMessage } from '../../core/utils/api-error.util';
 
 @Component({
   selector: 'app-signup',
@@ -49,7 +50,7 @@ export class SignupComponent {
     this.auth.signup(this.form.getRawValue()).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
-        this.error.set(err.error?.error ?? 'Signup failed.');
+        this.error.set(getApiErrorMessage(err, 'Signup failed. Check your details and try again.'));
         this.loading.set(false);
       },
       complete: () => this.loading.set(false)

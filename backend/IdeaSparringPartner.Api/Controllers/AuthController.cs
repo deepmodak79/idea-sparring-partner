@@ -1,5 +1,6 @@
 using IdeaSparringPartner.Api.Data;
 using IdeaSparringPartner.Api.DTOs.Auth;
+using IdeaSparringPartner.Api.Extensions;
 using IdeaSparringPartner.Api.Models;
 using IdeaSparringPartner.Api.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +39,7 @@ public class AuthController : ControllerBase
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
 
         if (await _dbContext.Users.AnyAsync(u => u.Email == normalizedEmail, cancellationToken))
-            return Conflict(new { error = "Email already registered." });
+            return Conflict(ApiErrorResponse.Create("Email already registered."));
 
         var now = DateTime.UtcNow;
         var user = new User
@@ -67,7 +68,7 @@ public class AuthController : ControllerBase
             .FirstOrDefaultAsync(u => u.Email == normalizedEmail, cancellationToken);
 
         if (user is null || !_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
-            return Unauthorized(new { error = "Invalid email or password." });
+            return Unauthorized(ApiErrorResponse.Create("Invalid email or password."));
 
         return Ok(await BuildAuthResponseAsync(user, cancellationToken));
     }
@@ -81,7 +82,7 @@ public class AuthController : ControllerBase
             request.RefreshToken, cancellationToken);
 
         if (storedToken?.User is null)
-            return Unauthorized(new { error = "Invalid or expired refresh token." });
+            return Unauthorized(ApiErrorResponse.Create("Invalid or expired refresh token."));
 
         await _refreshTokenService.RevokeRefreshTokenAsync(request.RefreshToken, cancellationToken);
 
@@ -113,14 +114,14 @@ public class AuthController : ControllerBase
     {
         var userId = GetCurrentUserId();
         if (userId is null)
-            return Unauthorized();
+            return Unauthorized(ApiErrorResponse.Create(ApiErrorResponse.Messages.Unauthorized));
 
         var user = await _dbContext.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
 
         if (user is null)
-            return Unauthorized();
+            return Unauthorized(ApiErrorResponse.Create("User account no longer exists. Please log in again."));
 
         return Ok(MapUser(user));
     }

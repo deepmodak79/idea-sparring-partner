@@ -1,4 +1,5 @@
 using IdeaSparringPartner.Api.Data;
+using IdeaSparringPartner.Api.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdeaSparringPartner.Api.Controllers;
@@ -35,23 +36,15 @@ public class HealthController : ControllerBase
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, new
-            {
-                status = "unavailable",
-                database = "not_configured",
-                timestamp
-            });
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, ApiErrorResponse.Create(
+                "Database connection is not configured on the server."));
         }
 
         var dbContext = _serviceProvider.GetService<AppDbContext>();
         if (dbContext is null)
         {
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, new
-            {
-                status = "unavailable",
-                database = "not_configured",
-                timestamp
-            });
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, ApiErrorResponse.Create(
+                "Database is not configured on the server."));
         }
 
         try
@@ -68,21 +61,13 @@ public class HealthController : ControllerBase
                 });
             }
 
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, new
-            {
-                status = "unavailable",
-                database = "unreachable",
-                timestamp
-            });
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, ApiErrorResponse.Create(
+                "Database is unreachable. Check the connection string and Supabase status."));
         }
         catch
         {
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, new
-            {
-                status = "unavailable",
-                database = "unreachable",
-                timestamp
-            });
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, ApiErrorResponse.Create(
+                "Database connection failed. Please try again shortly."));
         }
     }
 }

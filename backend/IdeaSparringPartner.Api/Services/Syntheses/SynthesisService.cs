@@ -20,10 +20,6 @@ public class SynthesisService
 
     public async Task<List<SynthesisDto>> GetSynthesesAsync(Guid userId, Guid ideaId, CancellationToken cancellationToken)
     {
-        var idea = await _dbContext.Ideas.AsNoTracking()
-            .FirstOrDefaultAsync(i => i.Id == ideaId && i.UserId == userId, cancellationToken);
-        if (idea is null) return [];
-
         var syntheses = await _dbContext.Syntheses
             .AsNoTracking()
             .Where(s => s.IdeaId == ideaId)
@@ -33,6 +29,9 @@ public class SynthesisService
         return syntheses.Select(Map).ToList();
     }
 
+    public Task<bool> IdeaExistsForUserAsync(Guid userId, Guid ideaId, CancellationToken cancellationToken) =>
+        _dbContext.Ideas.AnyAsync(i => i.Id == ideaId && i.UserId == userId, cancellationToken);
+
     public async Task<SynthesisDto?> CreateSynthesisAsync(Guid userId, Guid ideaId, CancellationToken cancellationToken)
     {
         var idea = await _dbContext.Ideas
@@ -41,6 +40,9 @@ public class SynthesisService
             .FirstOrDefaultAsync(i => i.Id == ideaId && i.UserId == userId, cancellationToken);
 
         if (idea is null) return null;
+
+        if (!idea.Threads.SelectMany(t => t.Messages).Any())
+            throw new InvalidOperationException("Add at least one message in a thread before generating synthesis.");
 
         var conversations = idea.Threads
             .OrderBy(t => t.Persona)

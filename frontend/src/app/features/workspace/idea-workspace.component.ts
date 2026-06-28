@@ -7,6 +7,7 @@ import { ThreadItem } from '../../core/models/thread.models';
 import { ThreadPanelComponent } from './thread-panel.component';
 import { SynthesisService } from '../../core/services/synthesis.service';
 import { Synthesis } from '../../core/models/synthesis.models';
+import { getApiErrorMessage } from '../../core/utils/api-error.util';
 
 @Component({
   selector: 'app-idea-workspace',
@@ -22,7 +23,8 @@ import { Synthesis } from '../../core/models/synthesis.models';
         </div>
       </div>
 
-      @if (loading()) {
+      @if (loadError()) { <p class="error">{{ loadError() }}</p> }
+      @else if (loading()) {
         <p>Loading workspace...</p>
       } @else if (idea()) {
         <header class="idea-header">
@@ -82,6 +84,7 @@ export class IdeaWorkspaceComponent implements OnInit {
 
   idea = signal<Idea | null>(null);
   threads = signal<ThreadItem[]>([]);
+  loadError = signal<string | null>(null);
   loading = signal(true);
   synthesisLoading = signal(false);
   synthesisError = signal<string | null>(null);
@@ -95,7 +98,10 @@ export class IdeaWorkspaceComponent implements OnInit {
         this.loadThreads(id);
         this.loadSyntheses(id);
       },
-      error: () => this.loading.set(false)
+      error: (err) => {
+        this.loadError.set(getApiErrorMessage(err, 'Failed to load this idea.'));
+        this.loading.set(false);
+      }
     });
   }
 
@@ -105,7 +111,10 @@ export class IdeaWorkspaceComponent implements OnInit {
         this.threads.set(res.items);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false)
+      error: (err) => {
+        this.loadError.set(getApiErrorMessage(err, 'Failed to load threads for this idea.'));
+        this.loading.set(false);
+      }
     });
   }
 
@@ -130,7 +139,7 @@ export class IdeaWorkspaceComponent implements OnInit {
         this.synthesisLoading.set(false);
       },
       error: (err) => {
-        this.synthesisError.set(err.error?.error ?? 'Failed to generate synthesis.');
+        this.synthesisError.set(getApiErrorMessage(err, 'Failed to generate synthesis.'));
         this.synthesisLoading.set(false);
       }
     });

@@ -95,7 +95,7 @@ public class ThreadMessageService
         Guid ideaId,
         CancellationToken cancellationToken)
     {
-        var ideaExists = await _dbContext.Ideas.AnyAsync(i => i.Id == ideaId && i.UserId == userId, cancellationToken);
+        var ideaExists = await IdeaExistsForUserAsync(userId, ideaId, cancellationToken);
         if (!ideaExists) return [];
 
         return await _dbContext.Threads
@@ -112,6 +112,9 @@ public class ThreadMessageService
             })
             .ToListAsync(cancellationToken);
     }
+
+    public Task<bool> IdeaExistsForUserAsync(Guid userId, Guid ideaId, CancellationToken cancellationToken) =>
+        _dbContext.Ideas.AnyAsync(i => i.Id == ideaId && i.UserId == userId, cancellationToken);
 
     private async Task<Models.Thread?> GetAuthorizedThreadAsync(
         Guid userId,

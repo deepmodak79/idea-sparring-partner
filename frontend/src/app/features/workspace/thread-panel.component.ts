@@ -2,6 +2,7 @@ import { Component, inject, Input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ThreadService } from '../../core/services/thread.service';
 import { Message, ThreadItem } from '../../core/models/thread.models';
+import { getApiErrorMessage } from '../../core/utils/api-error.util';
 
 @Component({
   selector: 'app-thread-panel',
@@ -61,7 +62,7 @@ export class ThreadPanelComponent {
   loadMessages(threadId: string): void {
     this.threadsApi.getMessages(threadId).subscribe({
       next: (res) => this.messages.set(res.items),
-      error: () => this.error.set('Failed to load messages.')
+      error: (err) => this.error.set(getApiErrorMessage(err, 'Failed to load messages for this thread.'))
     });
   }
 
@@ -78,7 +79,7 @@ export class ThreadPanelComponent {
         this.sending.set(false);
       },
       error: (err) => {
-        this.error.set(err.error?.error ?? 'Failed to send message.');
+        this.error.set(getApiErrorMessage(err, 'Failed to send message. The AI reply may be unavailable.'));
         this.sending.set(false);
       }
     });

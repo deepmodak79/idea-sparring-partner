@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { IdeaService } from '../../core/services/idea.service';
 import { Idea } from '../../core/models/idea.models';
+import { getApiErrorMessage } from '../../core/utils/api-error.util';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,6 +28,7 @@ import { Idea } from '../../core/models/idea.models';
         <button type="submit" [disabled]="form.invalid || creating()">Create idea</button>
       </form>
 
+      @if (loadError()) { <p class="error">{{ loadError() }}</p> }
       @if (loading()) {
         <p>Loading ideas...</p>
       } @else if (ideas().length === 0) {
@@ -70,6 +72,7 @@ export class DashboardComponent implements OnInit {
   ideas = signal<Idea[]>([]);
   loading = signal(true);
   creating = signal(false);
+  loadError = signal<string | null>(null);
   error = signal<string | null>(null);
 
   form = this.fb.nonNullable.group({
@@ -90,12 +93,16 @@ export class DashboardComponent implements OnInit {
   }
 
   loadIdeas(): void {
+    this.loadError.set(null);
     this.ideasApi.list().subscribe({
       next: (res) => {
         this.ideas.set(res.items);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false)
+      error: (err) => {
+        this.loadError.set(getApiErrorMessage(err, 'Failed to load your ideas.'));
+        this.loading.set(false);
+      }
     });
   }
 
@@ -106,7 +113,7 @@ export class DashboardComponent implements OnInit {
     this.ideasApi.create(this.form.getRawValue()).subscribe({
       next: (idea) => this.router.navigate(['/ideas', idea.id]),
       error: (err) => {
-        this.error.set(err.error?.error ?? 'Failed to create idea.');
+        this.error.set(getApiErrorMessage(err, 'Failed to create idea. AI opening challenges may be unavailable.'));
         this.creating.set(false);
       },
       complete: () => this.creating.set(false)

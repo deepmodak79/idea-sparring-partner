@@ -1,4 +1,5 @@
 using IdeaSparringPartner.Api.DTOs.Messages;
+using IdeaSparringPartner.Api.Extensions;
 using IdeaSparringPartner.Api.Services.Threads;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +23,16 @@ public class ThreadsController : ControllerBase
     public async Task<ActionResult<object>> GetThreadsForIdea(Guid ideaId, CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        if (userId is null) return Unauthorized();
+        if (userId is null)
+            return Unauthorized(ApiErrorResponse.Create(ApiErrorResponse.Messages.Unauthorized));
 
         var items = await _threadMessageService.GetThreadsForIdeaAsync(userId.Value, ideaId, cancellationToken);
+        if (items.Count == 0 &&
+            !await _threadMessageService.IdeaExistsForUserAsync(userId.Value, ideaId, cancellationToken))
+        {
+            return NotFound(ApiErrorResponse.Create(ApiErrorResponse.Messages.IdeaNotFound));
+        }
+
         return Ok(new { items });
     }
 
@@ -32,10 +40,12 @@ public class ThreadsController : ControllerBase
     public async Task<ActionResult<object>> GetMessages(Guid threadId, CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        if (userId is null) return Unauthorized();
+        if (userId is null)
+            return Unauthorized(ApiErrorResponse.Create(ApiErrorResponse.Messages.Unauthorized));
 
         var items = await _threadMessageService.GetMessagesAsync(userId.Value, threadId, cancellationToken);
-        if (items is null) return NotFound();
+        if (items is null)
+            return NotFound(ApiErrorResponse.Create(ApiErrorResponse.Messages.ThreadNotFound));
 
         return Ok(new { items });
     }
@@ -47,23 +57,19 @@ public class ThreadsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var userId = GetUserId();
-        if (userId is null) return Unauthorized();
+        if (userId is null)
+            return Unauthorized(ApiErrorResponse.Create(ApiErrorResponse.Messages.Unauthorized));
 
         if (string.IsNullOrWhiteSpace(request.Content))
-            return BadRequest(new { error = "Content is required." });
+            return BadRequest(ApiErrorResponse.Create("Message content is required."));
 
-        try
-        {
-            var result = await _threadMessageService.PostMessageAsync(
-                userId.Value, threadId, request.Content, cancellationToken);
+        var result = await _threadMessageService.PostMessageAsync(
+            userId.Value, threadId, request.Content, cancellationToken);
 
-            if (result is null) return NotFound();
-            return Created($"/api/threads/{threadId}/messages", result);
-        }
-        catch (InvalidOperationException)
-        {
-            return StatusCode(502, new { error = "AI provider request failed." });
-        }
+        if (result is null)
+            return NotFound(ApiErrorResponse.Create(ApiErrorResponse.Messages.ThreadNotFound));
+
+        return Created($"/api/threads/{threadId}/messages", result);
     }
 
     private Guid? GetUserId()

@@ -1,11 +1,13 @@
 using IdeaSparringPartner.Api.Configuration;
 using IdeaSparringPartner.Api.Data;
+using IdeaSparringPartner.Api.Extensions;
 using IdeaSparringPartner.Api.Services.Ai;
 using IdeaSparringPartner.Api.Services.Auth;
 using IdeaSparringPartner.Api.Services.Ideas;
 using IdeaSparringPartner.Api.Services.Memory;
 using IdeaSparringPartner.Api.Services.Syntheses;
 using IdeaSparringPartner.Api.Services.Threads;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdeaSparringPartner.Api.Extensions;
@@ -46,7 +48,27 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var messages = context.ModelState
+                        .Where(entry => entry.Value?.Errors.Count > 0)
+                        .SelectMany(entry => entry.Value!.Errors.Select(error =>
+                            string.IsNullOrWhiteSpace(error.ErrorMessage)
+                                ? $"Invalid value for {entry.Key}."
+                                : error.ErrorMessage))
+                        .Distinct()
+                        .ToList();
+
+                    var message = messages.Count > 0
+                        ? string.Join(" ", messages)
+                        : "The request body is invalid.";
+
+                    return new BadRequestObjectResult(ApiErrorResponse.Create(message));
+                };
+            });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 

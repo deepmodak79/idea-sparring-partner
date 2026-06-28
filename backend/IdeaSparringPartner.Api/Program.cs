@@ -32,4 +32,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+app.MapGet("/", () => Results.Json(new
+{
+    service = "Idea Sparring Partner API",
+    status = "ok",
+    health = "/api/health",
+    database = "/api/health/database"
+}));
+
 app.Run();
