@@ -1,6 +1,7 @@
 using IdeaSparringPartner.Api.Configuration;
 using IdeaSparringPartner.Api.Data;
 using IdeaSparringPartner.Api.Services.Auth;
+using IdeaSparringPartner.Api.Services.Ideas;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdeaSparringPartner.Api.Extensions;
@@ -12,6 +13,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        services.AddScoped<IdeaService, IdeaService>();
         return services;
     }
 
