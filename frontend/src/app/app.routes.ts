@@ -4,11 +4,13 @@ import { LoginComponent } from './features/auth/login.component';
 import { SignupComponent } from './features/auth/signup.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { IdeaWorkspaceComponent } from './features/workspace/idea-workspace.component';
+import { MemoryViewerComponent } from './features/memory/memory-viewer.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
   { path: 'signup', component: SignupComponent, canActivate: [guestGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'ideas/:id', component: IdeaWorkspaceComponent, canActivate: [authGuard] },
+  { path: 'ideas/:id/memories', component: MemoryViewerComponent, canActivate: [authGuard] },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
