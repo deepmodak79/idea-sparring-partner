@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://your-render-api.onrender.com/api'
+  apiBaseUrl: 'https://idea-sparring-partner-api.onrender.com/api'
 };
